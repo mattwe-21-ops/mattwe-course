@@ -1,7 +1,8 @@
 const SUPABASE_URL = "https://qphtafhpmazzkevtmftp.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwaHRhZmhwbWF6emtldnRtdGZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjIwODksImV4cCI6MjA5NjEzODA4OX0.rpOOfxGgaAvO_VP5EkPkadcNRgHMeekrX4wegNDWhvY";
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// CORREZIONE CRITICA: Cambiato il nome della variabile in 'supabaseClient' per evitare il SyntaxError
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Elementi DOM
 const authModal = document.getElementById('auth-modal');
@@ -26,11 +27,11 @@ let isLoginMode = true;
 // Gestione Finestra Modale Animata
 function openModal() { 
     authModal.classList.add('active'); 
-    document.body.style.overflow = 'hidden'; // Blocca lo scroll dello sfondo
+    document.body.style.overflow = 'hidden'; 
 }
 function closeModal() { 
     authModal.classList.remove('active'); 
-    document.body.style.overflow = ''; // Riabilita lo scroll
+    document.body.style.overflow = ''; 
     hideAlert(); 
 }
 
@@ -91,7 +92,7 @@ btnSubmit.addEventListener('click', async () => {
     btnSubmit.innerText = "Elaborazione in corso...";
 
     if (isLoginMode) {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if (error) {
             showAlert("Errore: Credenziali errate o account inesistente.", "error");
             btnSubmit.disabled = false;
@@ -101,7 +102,7 @@ btnSubmit.addEventListener('click', async () => {
             gestisciLoginSuccesso(data.user);
         }
     } else {
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await supabaseClient.auth.signUp({ email, password });
         if (error) {
             showAlert("Errore durante l'iscrizione: " + error.message, "error");
             btnSubmit.disabled = false;
@@ -112,14 +113,14 @@ btnSubmit.addEventListener('click', async () => {
                 setLoginMode();
                 btnSubmit.disabled = false;
                 passwordInput.value = "";
-            }, 1500); // Piccola attesa animata prima di cambiare scheda
+            }, 1500);
         }
     }
 });
 
 // Logica Logout
 btnLogout.addEventListener('click', async () => {
-    await supabase.auth.signOut();
+    await supabaseClient.signOut();
     sectionDashboard.classList.add('hidden');
     sectionAuth.classList.remove('hidden');
     navLoginBtn.classList.remove('hidden');
@@ -145,7 +146,7 @@ function gestisciLoginSuccesso(user) {
 
 // Verifica automatica all'avvio
 async function controllaSessione() {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabaseClient.auth.getSession();
     if (session && session.user) {
         gestisciLoginSuccesso(session.user);
     }
