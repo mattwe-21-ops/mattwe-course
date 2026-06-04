@@ -3,7 +3,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Elementi HTML Modale e Sezioni
+// Elementi DOM
 const authModal = document.getElementById('auth-modal');
 const modalCloseBtn = document.getElementById('modal-close-btn');
 const sectionAuth = document.getElementById('section-auth');
@@ -16,7 +16,6 @@ const btnSubmit = document.getElementById('btn-submit');
 const btnLogout = document.getElementById('btn-logout');
 const alertBox = document.getElementById('alert-box');
 
-// Pulsanti di attivazione
 const navLoginBtn = document.getElementById('nav-login-btn');
 const navRegisterBtn = document.getElementById('nav-register-btn');
 const heroStartBtn = document.getElementById('hero-start-btn');
@@ -24,14 +23,21 @@ const navUserText = document.getElementById('nav-user-text');
 
 let isLoginMode = true;
 
-// Gestione dell'apertura/chiusura della finestra modale
-function openModal() { authModal.classList.add('active'); }
-function closeModal() { authModal.classList.remove('active'); hideAlert(); }
+// Gestione Finestra Modale Animata
+function openModal() { 
+    authModal.classList.add('active'); 
+    document.body.style.overflow = 'hidden'; // Blocca lo scroll dello sfondo
+}
+function closeModal() { 
+    authModal.classList.remove('active'); 
+    document.body.style.overflow = ''; // Riabilita lo scroll
+    hideAlert(); 
+}
 
 modalCloseBtn.addEventListener('click', closeModal);
 authModal.addEventListener('click', (e) => { if(e.target === authModal) closeModal(); });
 
-// Funzioni degli avvisi interni
+// Messaggi di Errore/Successo interni
 function showAlert(message, type) {
     alertBox.innerText = message;
     alertBox.style.display = 'block';
@@ -39,7 +45,7 @@ function showAlert(message, type) {
 }
 function hideAlert() { alertBox.style.display = 'none'; }
 
-// Attivazione Modalità Login
+// Imposta Finestra su ACCEDI
 function setLoginMode() {
     isLoginMode = true;
     hideAlert();
@@ -51,14 +57,14 @@ function setLoginMode() {
     openModal();
 }
 
-// Attivazione Modalità Registrazione
+// Imposta Finestra su ISCRIVITI
 function setRegisterMode() {
     isLoginMode = false;
     hideAlert();
     sectionAuth.classList.remove('hidden');
     sectionDashboard.classList.add('hidden');
     authTitle.innerText = "Registrazione Gratuita";
-    authSubtitle.innerText = "Crea un nuovo profilo per sbloccare l'area quiz.";
+    authSubtitle.innerText = "Crea un nuovo profilo in pochi secondi per sbloccare l'area quiz.";
     btnSubmit.innerText = "Registrati Ora";
     openModal();
 }
@@ -67,7 +73,7 @@ navLoginBtn.addEventListener('click', setLoginMode);
 navRegisterBtn.addEventListener('click', setRegisterMode);
 heroStartBtn.addEventListener('click', setRegisterMode);
 
-// Logica di Invio dati a Supabase (Accedi / Iscriviti)
+// Logica di Comunicazione con Supabase
 btnSubmit.addEventListener('click', async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
@@ -82,12 +88,12 @@ btnSubmit.addEventListener('click', async () => {
     }
 
     btnSubmit.disabled = true;
-    btnSubmit.innerText = "Elaborazione...";
+    btnSubmit.innerText = "Elaborazione in corso...";
 
     if (isLoginMode) {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
-            showAlert("Errore: Credenziali errate o account non esistente.", "error");
+            showAlert("Errore: Credenziali errate o account inesistente.", "error");
             btnSubmit.disabled = false;
             btnSubmit.innerText = "Accedi";
         } else {
@@ -97,14 +103,16 @@ btnSubmit.addEventListener('click', async () => {
     } else {
         const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) {
-            showAlert("Errore di iscrizione: " + error.message, "error");
+            showAlert("Errore durante l'iscrizione: " + error.message, "error");
             btnSubmit.disabled = false;
             btnSubmit.innerText = "Registrati Ora";
         } else {
-            showAlert("Account creato! Ora puoi accedere usando le stesse credenziali.", "success");
-            setLoginMode();
-            btnSubmit.disabled = false;
-            passwordInput.value = "";
+            showAlert("Account creato! Ora effettua l'accesso usando i tuoi dati.", "success");
+            setTimeout(() => {
+                setLoginMode();
+                btnSubmit.disabled = false;
+                passwordInput.value = "";
+            }, 1500); // Piccola attesa animata prima di cambiare scheda
         }
     }
 });
@@ -122,7 +130,7 @@ btnLogout.addEventListener('click', async () => {
     closeModal();
 });
 
-// Cambia l'aspetto del sito quando l'utente effettua l'accesso
+// Sblocca Interfaccia Utente
 function gestisciLoginSuccesso(user) {
     if (user) {
         sectionAuth.classList.add('hidden');
@@ -131,11 +139,11 @@ function gestisciLoginSuccesso(user) {
         navRegisterBtn.classList.add('hidden');
         navUserText.innerText = `Profilo: ${user.email}`;
         navUserText.style.display = 'inline-block';
-        openModal(); // Mostra subito il pulsante per andare su Google Sites
+        openModal();
     }
 }
 
-// Controlla se l'utente ha una sessione attiva da visite precedenti
+// Verifica automatica all'avvio
 async function controllaSessione() {
     const { data: { session } } = await supabase.auth.getSession();
     if (session && session.user) {
