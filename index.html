@@ -7,49 +7,84 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
         .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .container { max-width: 400px; width: 100%; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
-        h1 { color: #333; margin-bottom: 10px; font-size: 24px; }
-        p { color: #666; font-size: 14px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.2s; margin-top: 10px; }
-        button:hover { background-color: #0056b3; }
-        .btn-link { background-color: #28a745; text-decoration: none; display: block; box-sizing: border-box; }
+        .container { max-width: 400px; width: 100%; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; transition: all 0.3s ease; }
+        
+        h1 { color: #333; margin-bottom: 5px; font-size: 26px; font-weight: 700; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 25px; }
+        
+        input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: border 0.2s; background-color: #f9f9fafb; }
+        input:focus { border-color: #007bff; outline: none; background-color: #fff; }
+        
+        button { width: 100%; padding: 14px; background-color: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.2s ease; margin-top: 15px; }
+        button:hover { background-color: #0056b3; transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+        
+        .btn-link { background-color: #28a745; text-decoration: none; display: block; box-sizing: border-box; animation: pulse 2s infinite; }
         .btn-link:hover { background-color: #218838; }
+        
         .hidden { display: none; }
-        .switch-text { margin-top: 15px; font-size: 13px; }
-        .switch-text a { color: #007bff; text-decoration: none; }
-        footer { background-color: #333; color: white; text-align: center; padding: 15px; font-size: 14px; }
+        
+        /* Messaggi di stato dinamici */
+        .status-box { margin-top: 15px; padding: 10px; border-radius: 6px; font-size: 13px; display: none; font-weight: 500; }
+        .status-error { background-color: #f8d7da; color: #721c24; display: block; }
+        .status-success { background-color: #d4edda; color: #155724; display: block; }
+        .status-loading { background-color: #e2e3e5; color: #383d41; display: block; }
+        
+        .switch-text { margin-top: 20px; font-size: 14px; color: #555; }
+        .switch-text a { color: #007bff; text-decoration: none; font-weight: 600; }
+        .switch-text a:hover { text-decoration: underline; }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+        
+        footer { background-color: #1e1e24; color: #a0a0a5; text-align: center; padding: 15px; font-size: 13px; letter-spacing: 0.5px; }
         footer a { color: #00cbc6; text-decoration: none; font-weight: bold; }
+        footer a:hover { color: #00ffff; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+
     <div class="main-content">
-        <div class="container">
-            <h1>MattweTuttoTech Quiz</h1>
+        <div class="container" id="main-box">
+            <h1 id="main-title">MattweTuttoTech</h1>
+            <p class="subtitle" id="main-subtitle">Area Login</p>
+            
+            <div id="status-message" class="status-box"></div>
+
             <div id="auth-section">
-                <p id="auth-instruction">Accedi per sbloccare i quiz gratuiti</p>
-                <input type="email" id="email" placeholder="La tua Email">
-                <input type="password" id="password" placeholder="La tua Password">
+                <input type="email" id="email" placeholder="Inserisci la tua Email">
+                <input type="password" id="password" placeholder="Crea una Password">
+                
                 <button id="btn-action">Accedi</button>
-                <p class="switch-text" id="toggle-container">
-                    Non hai un account? <a href="#" id="link-switch">Registrati qui</a>
+                
+                <p class="switch-text">
+                    <span id="switch-desc">Non hai un account?</span> 
+                    <a href="#" id="link-switch">Registrati qui</a>
                 </p>
             </div>
+
             <div id="quiz-section" class="hidden">
-                <p>Accesso effettuato con successo!</p>
-                <h3>I tuoi Quiz sono pronti</h3>
-                <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank">
-                    <button class="btn-link">VAI AI QUIZ SU GOOGLE SITES 🚀</button>
+                <div style="font-size: 50px; margin-bottom: 10px;">🎉</div>
+                <h3 style="margin-top: 0; color: #28a745;">Accesso Consentito!</h3>
+                <p style="color: #555; margin-bottom: 25px;">I quiz esclusivi di MattweTuttoTech sono ora sbloccati sul tuo account.</p>
+                
+                <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank" style="text-decoration: none;">
+                    <button class="btn-link">ENTRA NELL'AREA QUIZ 🚀</button>
                 </a>
-                <br><br>
-                <button id="btn-logout" style="background-color: #dc3545;">Disconnetti</button>
+                
+                <button id="btn-logout" style="background-color: transparent; color: #dc3545; border: 1px solid #dc3545; margin-top: 20px; padding: 10px;">Scollegati</button>
             </div>
         </div>
     </div>
+
     <footer>
-        <p>Mattwe-Copyright&2026 | Visita il mio <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank">Sito Principale</a></p>
+        <p>Mattwe-Copyright&2026 | Visita il <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank">Sito Web Principale</a></p>
     </footer>
+
     <script src="script.js"></script>
 </body>
 </html>

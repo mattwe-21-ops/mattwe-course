@@ -3,82 +3,129 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Elementi DOM
 const authSection = document.getElementById('auth-section');
 const quizSection = document.getElementById('quiz-section');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const btnAction = document.getElementById('btn-action');
 const linkSwitch = document.getElementById('link-switch');
-const authInstruction = document.getElementById('auth-instruction');
-const toggleContainer = document.getElementById('toggle-container');
+const switchDesc = document.getElementById('switch-desc');
+const mainSubtitle = document.getElementById('main-subtitle');
+const statusMessage = document.getElementById('status-message');
 const btnLogout = document.getElementById('btn-logout');
 
 let isLoginMode = true;
 
+// Funzione per mostrare messaggi di stato dinamici
+function showMessage(text, type) {
+    statusMessage.innerText = text;
+    statusMessage.className = "status-box"; // Reset delle classi
+    
+    if (type === 'error') statusMessage.classList.add('status-error');
+    if (type === 'success') statusMessage.classList.add('status-success');
+    if (type === 'loading') statusMessage.classList.add('status-loading');
+}
+
+function hideMessage() {
+    statusMessage.style.display = 'none';
+    statusMessage.className = "status-box";
+}
+
+// Gestione del cambio dinamico della scheda (Login <-> Registrazione)
 linkSwitch.addEventListener('click', (e) => {
     e.preventDefault();
     isLoginMode = !isLoginMode;
+    hideMessage();
     
     if (isLoginMode) {
-        authInstruction.innerText = "Accedi per sbloccare i quiz gratuiti";
+        mainSubtitle.innerText = "Area Login";
+        passwordInput.placeholder = "Inserisci la tua Password";
         btnAction.innerText = "Accedi";
-        toggleContainer.innerHTML = 'Non hai un account? <a href="#" id="link-switch">Registrati qui</a>';
+        switchDesc.innerText = "Non hai un account?";
+        linkSwitch.innerText = "Registrati qui";
+        btnAction.style.backgroundColor = "#007bff";
     } else {
-        authInstruction.innerText = "Crea un account gratuito per partecipare";
-        btnAction.innerText = "Registrati";
-        toggleContainer.innerHTML = 'Hai già un account? <a href="#" id="link-switch">Accedi qui</a>';
+        mainSubtitle.innerText = "Crea un Account Gratuito";
+        passwordInput.placeholder = "Scegli una Password sicura";
+        btnAction.innerText = "Registrati Ora";
+        switchDesc.innerText = "Hai già un account?";
+        linkSwitch.innerText = "Accedi qui";
+        btnAction.style.backgroundColor = "#28a745"; // Diventa verde in modalità registrazione
     }
-    document.getElementById('link-switch').addEventListener('click', arguments.callee);
 });
 
+// Invio dei moduli a Supabase
 btnAction.addEventListener('click', async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
 
     if (!email || !password) {
-        alert("Per favore, compila tutti i campi.");
+        showMessage("Attenzione: Compila tutti i campi richiesti.", "error");
+        return;
+    }
+    
+    if (password.length < 6) {
+        showMessage("La password deve contenere almeno 6 caratteri.", "error");
         return;
     }
 
+    // Stato di caricamento dinamico
+    btnAction.disabled = true;
+    const originalBtnText = btnAction.innerText;
+    btnAction.innerText = isLoginMode ? "Connessione in corso..." : "Creazione account...";
+    showMessage("Elaborazione della richiesta con il server...", "loading");
+
     if (isLoginMode) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        });
+        // LOGIN
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
         if (error) {
-            alert("Errore di accesso: " + error.message);
+            showMessage("Errore: Credenziali non valide o utente inesistente.", "error");
+            btnAction.disabled = false;
+            btnAction.innerText = originalBtnText;
         } else {
+            hideMessage();
             mostraAreaRiservata();
         }
     } else {
-        const { data, error } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-        });
+        // REGISTRAZIONE
+        const { data, error } = await supabase.auth.signUp({ email, password });
 
         if (error) {
-            alert("Errore di registrazione: " + error.message);
+            showMessage("Errore durante la registrazione: " + error.message, "error");
+            btnAction.disabled = false;
+            btnAction.innerText = originalBtnText;
         } else {
-            alert("Registrazione completata! Se hai lasciato attiva la conferma via email su Supabase, controlla la tua posta. Altrimenti puoi già fare il login.");
+            showMessage("Registrazione completata con successo! Ora puoi effettuare il login.", "success");
+            // Forza il ritorno alla modalità login
+            isLoginMode = false;
             linkSwitch.click();
+            emailInput.value = email; // Mantiene l'email scritta per comodità
+            passwordInput.value = "";
+            btnAction.disabled = false;
         }
     }
 });
 
+// LOGOUT
 btnLogout.addEventListener('click', async () => {
     await supabase.auth.signOut();
     quizSection.classList.add('hidden');
     authSection.classList.remove('hidden');
+    mainSubtitle.innerText = "Area Login";
     emailInput.value = "";
     passwordInput.value = "";
+    hideMessage();
 });
 
 function mostraAreaRiservata() {
     authSection.classList.add('hidden');
     quizSection.classList.remove('hidden');
+    mainSubtitle.innerText = "Pannello Utente";
 }
 
+// Controllo sessione precedente automatica
 async function controllaSessione() {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
