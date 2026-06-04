@@ -3,133 +3,134 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Elementi DOM
-const authSection = document.getElementById('auth-section');
-const quizSection = document.getElementById('quiz-section');
+// Elementi HTML
+const sectionAuth = document.getElementById('section-auth');
+const sectionDashboard = document.getElementById('section-dashboard');
+const authTitle = document.getElementById('auth-title');
+const authSubtitle = document.getElementById('auth-subtitle');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
-const btnAction = document.getElementById('btn-action');
-const linkSwitch = document.getElementById('link-switch');
-const switchDesc = document.getElementById('switch-desc');
-const mainSubtitle = document.getElementById('main-subtitle');
-const statusMessage = document.getElementById('status-message');
+const btnSubmit = document.getElementById('btn-submit');
 const btnLogout = document.getElementById('btn-logout');
+const alertBox = document.getElementById('alert-box');
 
-let isLoginMode = true;
+// Pulsanti Navbar superiore
+const navLoginBtn = document.getElementById('nav-login-btn');
+const navRegisterBtn = document.getElementById('nav-register-btn');
+const navUserText = document.getElementById('nav-user-text');
 
-// Funzione per mostrare messaggi di stato dinamici
-function showMessage(text, type) {
-    statusMessage.innerText = text;
-    statusMessage.className = "status-box"; // Reset delle classi
-    
-    if (type === 'error') statusMessage.classList.add('status-error');
-    if (type === 'success') statusMessage.classList.add('status-success');
-    if (type === 'loading') statusMessage.classList.add('status-loading');
-}
+let isLoginMode = true; // Stato: true = Accedi, false = Iscriviti
 
-function hideMessage() {
-    statusMessage.style.display = 'none';
-    statusMessage.className = "status-box";
-}
-
-// Gestione del cambio dinamico della scheda (Login <-> Registrazione)
-linkSwitch.addEventListener('click', (e) => {
-    e.preventDefault();
-    isLoginMode = !isLoginMode;
-    hideMessage();
-    
-    if (isLoginMode) {
-        mainSubtitle.innerText = "Area Login";
-        passwordInput.placeholder = "Inserisci la tua Password";
-        btnAction.innerText = "Accedi";
-        switchDesc.innerText = "Non hai un account?";
-        linkSwitch.innerText = "Registrati qui";
-        btnAction.style.backgroundColor = "#007bff";
+// Funzione per mostrare avvisi dinamici sul box senza usare i pop-up fastidiosi
+function showAlert(message, type) {
+    alertBox.innerText = message;
+    alertBox.style.display = 'block';
+    if (type === 'error') {
+        alertBox.className = 'alert alert-error';
     } else {
-        mainSubtitle.innerText = "Crea un Account Gratuito";
-        passwordInput.placeholder = "Scegli una Password sicura";
-        btnAction.innerText = "Registrati Ora";
-        switchDesc.innerText = "Hai già un account?";
-        linkSwitch.innerText = "Accedi qui";
-        btnAction.style.backgroundColor = "#28a745"; // Diventa verde in modalità registrazione
+        alertBox.className = 'alert alert-success';
     }
+}
+
+function hideAlert() {
+    alertBox.style.display = 'none';
+}
+
+// Cambia la grafica in modalità "Accedi" quando clicchi in alto a destra
+navLoginBtn.addEventListener('click', () => {
+    isLoginMode = true;
+    hideAlert();
+    authTitle.innerText = "Accedi ai Corsi Gratuiti";
+    authSubtitle.innerText = "Inserisci i tuoi dati per entrare nella piattaforma o creare un nuovo profilo.";
+    btnSubmit.innerText = "Accedi";
+    btnSubmit.className = "btn-main btn-blue";
 });
 
-// Invio dei moduli a Supabase
-btnAction.addEventListener('click', async () => {
+// Cambia la grafica in modalità "Iscriviti" quando clicchi in alto a destra
+navRegisterBtn.addEventListener('click', () => {
+    isLoginMode = false;
+    hideAlert();
+    authTitle.innerText = "Crea un Account Gratuito";
+    authSubtitle.innerText = "Registrati inserendo una email e una password per sbloccare l'area quiz.";
+    btnSubmit.innerText = "Registrati Ora";
+    btnSubmit.className = "btn-main btn-blue";
+});
+
+// Gestione invio modulo (Login / Registrazione)
+btnSubmit.addEventListener('click', async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
 
     if (!email || !password) {
-        showMessage("Attenzione: Compila tutti i campi richiesti.", "error");
-        return;
-    }
-    
-    if (password.length < 6) {
-        showMessage("La password deve contenere almeno 6 caratteri.", "error");
+        showAlert("Per fare favore, compila tutti i campi richiesti.", "error");
         return;
     }
 
-    // Stato di caricamento dinamico
-    btnAction.disabled = true;
-    const originalBtnText = btnAction.innerText;
-    btnAction.innerText = isLoginMode ? "Connessione in corso..." : "Creazione account...";
-    showMessage("Elaborazione della richiesta con il server...", "loading");
+    if (password.length < 6) {
+        showAlert("La password deve contenere almeno 6 caratteri.", "error");
+        return;
+    }
+
+    btnSubmit.disabled = true;
+    btnSubmit.innerText = "Elaborazione...";
 
     if (isLoginMode) {
-        // LOGIN
+        // ACCEDI
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
         if (error) {
-            showMessage("Errore: Credenziali non valide o utente inesistente.", "error");
-            btnAction.disabled = false;
-            btnAction.innerText = originalBtnText;
+            showAlert("Errore di accesso: Controlla email e password o iscriviti se non l'hai fatto.", "error");
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Accedi";
         } else {
-            hideMessage();
-            mostraAreaRiservata();
+            hideAlert();
+            aggiornaInterfacciaUtente(data.user);
         }
     } else {
-        // REGISTRAZIONE
+        // ISCRIVITI
         const { data, error } = await supabase.auth.signUp({ email, password });
-
         if (error) {
-            showMessage("Errore durante la registrazione: " + error.message, "error");
-            btnAction.disabled = false;
-            btnAction.innerText = originalBtnText;
+            showAlert("Errore di registrazione: " + error.message, "error");
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Registrati Ora";
         } else {
-            showMessage("Registrazione completata con successo! Ora puoi effettuare il login.", "success");
-            // Forza il ritorno alla modalità login
-            isLoginMode = false;
-            linkSwitch.click();
-            emailInput.value = email; // Mantiene l'email scritta per comodità
+            showAlert("Iscrizione completata con successo! Ora puoi fare il login usando i pulsanti in alto.", "success");
+            navLoginBtn.click(); // Rimette in modalità login automaticamente
+            btnSubmit.disabled = false;
             passwordInput.value = "";
-            btnAction.disabled = false;
         }
     }
 });
 
-// LOGOUT
+// Sconnessione (Logout)
 btnLogout.addEventListener('click', async () => {
     await supabase.auth.signOut();
-    quizSection.classList.add('hidden');
-    authSection.classList.remove('hidden');
-    mainSubtitle.innerText = "Area Login";
+    sectionDashboard.classList.add('hidden');
+    sectionAuth.classList.remove('hidden');
+    navLoginBtn.classList.remove('hidden');
+    navRegisterBtn.classList.remove('hidden');
+    navUserText.classList.add('hidden');
     emailInput.value = "";
     passwordInput.value = "";
-    hideMessage();
+    hideAlert();
 });
 
-function mostraAreaRiservata() {
-    authSection.classList.add('hidden');
-    quizSection.classList.remove('hidden');
-    mainSubtitle.innerText = "Pannello Utente";
+// Funzione per mostrare l'area protetta quando l'utente è correttamente autenticato
+function aggiornaInterfacciaUtente(user) {
+    if (user) {
+        sectionAuth.classList.add('hidden');
+        sectionDashboard.classList.remove('hidden');
+        navLoginBtn.classList.add('hidden');
+        navRegisterBtn.classList.add('hidden');
+        navUserText.innerText = `Utente: ${user.email}`;
+        navUserText.classList.remove('hidden');
+    }
 }
 
-// Controllo sessione precedente automatica
+// Verifica automatica all'apertura del sito se l'utente era già registrato/loggato
 async function controllaSessione() {
     const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-        mostraAreaRiservata();
+    if (session && session.user) {
+        aggiornaInterfacciaUtente(session.user);
     }
 }
 controllaSessione();

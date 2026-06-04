@@ -3,86 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MattweTuttoTech - Area Quiz</title>
+    <title>MattweTuttoTech - Corsi e Quiz Gratuiti</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .container { max-width: 400px; width: 100%; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; transition: all 0.3s ease; }
+        /* Reset e Stili Generali */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
         
-        h1 { color: #333; margin-bottom: 5px; font-size: 26px; font-weight: 700; }
-        .subtitle { color: #666; font-size: 14px; margin-bottom: 25px; }
+        /* BARRA DI NAVIGAZIONE (NAVBAR) */
+        .navbar { background-color: #ffffff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: fixed; width: 100%; top: 0; left: 0; z-index: 1000; }
+        .nav-logo { font-size: 20px; font-weight: bold; color: #333; text-decoration: none; }
+        .nav-buttons { display: flex; gap: 15px; align-items: center; }
         
-        input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: border 0.2s; background-color: #f9f9fafb; }
+        /* Pulsanti della Navbar */
+        .btn-nav { padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
+        .btn-login-nav { background-color: transparent; color: #007bff; border: 1px solid #007bff; }
+        .btn-login-nav:hover { background-color: #f0f7ff; }
+        .btn-register-nav { background-color: #007bff; color: white; }
+        .btn-register-nav:hover { background-color: #0056b3; }
+        .user-logged { font-size: 14px; color: #666; display: none; }
+
+        /* CONTENUTO PRINCIPALE */
+        .main-content { flex: 1; padding-top: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 40px; }
+        
+        /* Box Centrale di Benvenuto / Login */
+        .card { background: white; max-width: 450px; width: 90%; padding: 35px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
+        .card h1 { font-size: 24px; margin-bottom: 10px; color: #111; }
+        .card p { color: #666; font-size: 14px; margin-bottom: 20px; line-height: 1.5; }
+        
+        /* Modulo di Input */
+        .form-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; }
+        input { width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 14px; background-color: #fafafa; }
         input:focus { border-color: #007bff; outline: none; background-color: #fff; }
         
-        button { width: 100%; padding: 14px; background-color: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.2s ease; margin-top: 15px; }
-        button:hover { background-color: #0056b3; transform: translateY(-1px); }
-        button:active { transform: translateY(0); }
-        
-        .btn-link { background-color: #28a745; text-decoration: none; display: block; box-sizing: border-box; animation: pulse 2s infinite; }
-        .btn-link:hover { background-color: #218838; }
-        
-        .hidden { display: none; }
-        
-        /* Messaggi di stato dinamici */
-        .status-box { margin-top: 15px; padding: 10px; border-radius: 6px; font-size: 13px; display: none; font-weight: 500; }
-        .status-error { background-color: #f8d7da; color: #721c24; display: block; }
-        .status-success { background-color: #d4edda; color: #155724; display: block; }
-        .status-loading { background-color: #e2e3e5; color: #383d41; display: block; }
-        
-        .switch-text { margin-top: 20px; font-size: 14px; color: #555; }
-        .switch-text a { color: #007bff; text-decoration: none; font-weight: 600; }
-        .switch-text a:hover { text-decoration: underline; }
-        
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
-        }
-        
-        footer { background-color: #1e1e24; color: #a0a0a5; text-align: center; padding: 15px; font-size: 13px; letter-spacing: 0.5px; }
+        /* Pulsanti Azione */
+        .btn-main { width: 100%; padding: 12px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; transition: background 0.2s; }
+        .btn-blue { background-color: #007bff; }
+        .btn-blue:hover { background-color: #0056b3; }
+        .btn-green { background-color: #28a745; text-decoration: none; display: inline-block; }
+        .btn-green:hover { background-color: #218838; }
+        .btn-danger { background-color: transparent; color: #dc3545; border: 1px solid #dc3545; font-size: 14px; padding: 8px; }
+
+        /* Messaggi di errore/successo dinamici */
+        .alert { padding: 10px; border-radius: 6px; font-size: 13px; margin-bottom: 15px; display: none; text-align: left; }
+        .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+        .hidden { display: none !important; }
+
+        /* FOOTER */
+        footer { background-color: #1e1e24; color: #a0a0a5; text-align: center; padding: 15px; font-size: 13px; margin-top: auto; }
         footer a { color: #00cbc6; text-decoration: none; font-weight: bold; }
-        footer a:hover { color: #00ffff; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <div class="main-content">
-        <div class="container" id="main-box">
-            <h1 id="main-title">MattweTuttoTech</h1>
-            <p class="subtitle" id="main-subtitle">Area Login</p>
-            
-            <div id="status-message" class="status-box"></div>
+    <nav class="navbar">
+        <a href="#" class="nav-logo">MattweTuttoTech</a>
+        <div class="nav-buttons" id="nav-auth-container">
+            <button class="btn-nav btn-login-nav" id="nav-login-btn">Accedi</button>
+            <button class="btn-nav btn-register-nav" id="nav-register-btn">Iscriviti</button>
+            <span class="user-logged" id="nav-user-text"></span>
+        </div>
+    </nav>
 
-            <div id="auth-section">
-                <input type="email" id="email" placeholder="Inserisci la tua Email">
-                <input type="password" id="password" placeholder="Crea una Password">
+    <main class="main-content">
+        <div class="card">
+            <div id="alert-box" class="alert"></div>
+
+            <div id="section-auth">
+                <h1 id="auth-title">Accedi ai Corsi Gratuiti</h1>
+                <p id="auth-subtitle">Inserisci i tuoi dati per entrare nella piattaforma o creare un nuovo profilo.</p>
                 
-                <button id="btn-action">Accedi</button>
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Indirizzo Email">
+                    <input type="password" id="password" placeholder="Password (almeno 6 caratteri)">
+                </div>
                 
-                <p class="switch-text">
-                    <span id="switch-desc">Non hai un account?</span> 
-                    <a href="#" id="link-switch">Registrati qui</a>
-                </p>
+                <button class="btn-main btn-blue" id="btn-submit">Accedi</button>
             </div>
 
-            <div id="quiz-section" class="hidden">
-                <div style="font-size: 50px; margin-bottom: 10px;">🎉</div>
-                <h3 style="margin-top: 0; color: #28a745;">Accesso Consentito!</h3>
-                <p style="color: #555; margin-bottom: 25px;">I quiz esclusivi di MattweTuttoTech sono ora sbloccati sul tuo account.</p>
+            <div id="section-dashboard" class="hidden">
+                <div style="font-size: 40px; margin-bottom: 10px;">🎓</div>
+                <h1>I tuoi Corsi e Quiz sono Sbloccati!</h1>
+                <p>Benvenuto nella piattaforma MattweTuttoTech. Clicca sul pulsante qui sotto per accedere al catalogo completo delle lezioni su Google Sites.</p>
                 
-                <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank" style="text-decoration: none;">
-                    <button class="btn-link">ENTRA NELL'AREA QUIZ 🚀</button>
+                <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank" style="text-decoration: none; display: block; margin-bottom: 20px;">
+                    <button class="btn-main btn-green">ACCEDI AI CORSI SU GOOGLE SITES 🚀</button>
                 </a>
                 
-                <button id="btn-logout" style="background-color: transparent; color: #dc3545; border: 1px solid #dc3545; margin-top: 20px; padding: 10px;">Scollegati</button>
+                <button class="btn-main btn-danger" id="btn-logout">Disconnetti Account</button>
             </div>
         </div>
-    </div>
+    </main>
 
     <footer>
-        <p>Mattwe-Copyright&2026 | Visita il <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank">Sito Web Principale</a></p>
+        <p>Mattwe-Copyright&2026 | <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank">Sito Principale</a></p>
     </footer>
 
     <script src="script.js"></script>
