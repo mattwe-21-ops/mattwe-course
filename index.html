@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MattweTuttoTech - Area Quiz</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        .main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { max-width: 400px; width: 100%; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
+        h1 { color: #333; margin-bottom: 10px; font-size: 24px; }
+        p { color: #666; font-size: 14px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        button { width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.2s; margin-top: 10px; }
+        button:hover { background-color: #0056b3; }
+        .btn-link { background-color: #28a745; text-decoration: none; display: block; box-sizing: border-box; }
+        .btn-link:hover { background-color: #218838; }
+        .hidden { display: none; }
+        .switch-text { margin-top: 15px; font-size: 13px; }
+        .switch-text a { color: #007bff; text-decoration: none; }
+        footer { background-color: #333; color: white; text-align: center; padding: 15px; font-size: 14px; }
+        footer a { color: #00cbc6; text-decoration: none; font-weight: bold; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="main-content">
+        <div class="container">
+            <h1>MattweTuttoTech Quiz</h1>
+            <div id="auth-section">
+                <p id="auth-instruction">Accedi per sbloccare i quiz gratuiti</p>
+                <input type="email" id="email" placeholder="La tua Email">
+                <input type="password" id="password" placeholder="La tua Password">
+                <button id="btn-action">Accedi</button>
+                <p class="switch-text" id="toggle-container">
+                    Non hai un account? <a href="#" id="link-switch">Registrati qui</a>
+                </p>
+            </div>
+            <div id="quiz-section" class="hidden">
+                <p>Accesso effettuato con successo!</p>
+                <h3>I tuoi Quiz sono pronti</h3>
+                <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank">
+                    <button class="btn-link">VAI AI QUIZ SU GOOGLE SITES 🚀</button>
+                </a>
+                <br><br>
+                <button id="btn-logout" style="background-color: #dc3545;">Disconnetti</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Mattwe-Copyright&2026 | Visita il mio <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank">Sito Principale</a></p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
