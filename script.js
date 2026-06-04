@@ -43,6 +43,8 @@ function hideAlert() { alertBox.style.display = 'none'; }
 function setLoginMode() {
     isLoginMode = true;
     hideAlert();
+    sectionAuth.classList.remove('hidden');
+    sectionDashboard.classList.add('hidden');
     authTitle.innerText = "Accedi ai Corsi";
     authSubtitle.innerText = "Inserisci le tue credenziali per riprendere i quiz.";
     btnSubmit.innerText = "Accedi";
@@ -53,6 +55,8 @@ function setLoginMode() {
 function setRegisterMode() {
     isLoginMode = false;
     hideAlert();
+    sectionAuth.classList.remove('hidden');
+    sectionDashboard.classList.add('hidden');
     authTitle.innerText = "Registrazione Gratuita";
     authSubtitle.innerText = "Crea un nuovo profilo per sbloccare l'area quiz.";
     btnSubmit.innerText = "Registrati Ora";
