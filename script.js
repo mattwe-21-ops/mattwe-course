@@ -1,10 +1,10 @@
 const SUPABASE_URL = "https://qphtafhpmazzkevtmftp.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwaHRhZmhwbWF6emtldnRtdGZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjIwODksImV4cCI6MjA5NjEzODA4OX0.rpOOfxGgaAvO_VP5EkPkadcNRgHMeekrX4wegNDWhvY";
 
-// CORREZIONE CRITICA: Cambiato il nome della variabile in 'supabaseClient' per evitare il SyntaxError
+// Inizializzazione corretta del client Supabase per evitare il SyntaxError
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Elementi DOM
+// Elementi HTML della finestra modale e delle sezioni
 const authModal = document.getElementById('auth-modal');
 const modalCloseBtn = document.getElementById('modal-close-btn');
 const sectionAuth = document.getElementById('section-auth');
@@ -17,6 +17,7 @@ const btnSubmit = document.getElementById('btn-submit');
 const btnLogout = document.getElementById('btn-logout');
 const alertBox = document.getElementById('alert-box');
 
+// Pulsanti di attivazione sulla pagina
 const navLoginBtn = document.getElementById('nav-login-btn');
 const navRegisterBtn = document.getElementById('nav-register-btn');
 const heroStartBtn = document.getElementById('hero-start-btn');
@@ -24,7 +25,7 @@ const navUserText = document.getElementById('nav-user-text');
 
 let isLoginMode = true;
 
-// Gestione Finestra Modale Animata
+// Funzioni per aprire e chiudere il pop-up con le animazioni
 function openModal() { 
     authModal.classList.add('active'); 
     document.body.style.overflow = 'hidden'; 
@@ -38,7 +39,7 @@ function closeModal() {
 modalCloseBtn.addEventListener('click', closeModal);
 authModal.addEventListener('click', (e) => { if(e.target === authModal) closeModal(); });
 
-// Messaggi di Errore/Successo interni
+// Gestione dei messaggi di avviso (Errori o Successi)
 function showAlert(message, type) {
     alertBox.innerText = message;
     alertBox.style.display = 'block';
@@ -46,7 +47,7 @@ function showAlert(message, type) {
 }
 function hideAlert() { alertBox.style.display = 'none'; }
 
-// Imposta Finestra su ACCEDI
+// Attiva la modalità ACCEDI nel pop-up
 function setLoginMode() {
     isLoginMode = true;
     hideAlert();
@@ -58,7 +59,7 @@ function setLoginMode() {
     openModal();
 }
 
-// Imposta Finestra su ISCRIVITI
+// Attiva la modalità ISCRIVITI nel pop-up
 function setRegisterMode() {
     isLoginMode = false;
     hideAlert();
@@ -70,11 +71,12 @@ function setRegisterMode() {
     openModal();
 }
 
+// Collega i clic ai pulsanti della Home Page
 navLoginBtn.addEventListener('click', setLoginMode);
 navRegisterBtn.addEventListener('click', setRegisterMode);
 heroStartBtn.addEventListener('click', setRegisterMode);
 
-// Logica di Comunicazione con Supabase
+// Logica di invio dati a Supabase (Login e Registrazione)
 btnSubmit.addEventListener('click', async () => {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
@@ -92,6 +94,7 @@ btnSubmit.addEventListener('click', async () => {
     btnSubmit.innerText = "Elaborazione in corso...";
 
     if (isLoginMode) {
+        // Tentativo di Accesso
         const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if (error) {
             showAlert("Errore: Credenziali errate o account inesistente.", "error");
@@ -102,6 +105,7 @@ btnSubmit.addEventListener('click', async () => {
             gestisciLoginSuccesso(data.user);
         }
     } else {
+        // Tentativo di Registrazione
         const { data, error } = await supabaseClient.auth.signUp({ email, password });
         if (error) {
             showAlert("Errore durante l'iscrizione: " + error.message, "error");
@@ -118,9 +122,9 @@ btnSubmit.addEventListener('click', async () => {
     }
 });
 
-// Logica Logout
+// Logica per disconnettere l'utente (Logout)
 btnLogout.addEventListener('click', async () => {
-    await supabaseClient.signOut();
+    await supabaseClient.auth.signOut();
     sectionDashboard.classList.add('hidden');
     sectionAuth.classList.remove('hidden');
     navLoginBtn.classList.remove('hidden');
@@ -131,7 +135,7 @@ btnLogout.addEventListener('click', async () => {
     closeModal();
 });
 
-// Sblocca Interfaccia Utente
+// Mostra la dashboard con il link a Google Sites quando l'utente si logga
 function gestisciLoginSuccesso(user) {
     if (user) {
         sectionAuth.classList.add('hidden');
@@ -144,7 +148,7 @@ function gestisciLoginSuccesso(user) {
     }
 }
 
-// Verifica automatica all'avvio
+// Controlla automaticamente se l'utente era già loggato all'apertura del sito
 async function controllaSessione() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session && session.user) {
