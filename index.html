@@ -1,175 +1,314 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MattweTuttoTech - Corsi e Quiz Gratuiti</title>
-    <style>
-        /* Reset e Variabili Design */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; line-height: 1.6; overflow-x: hidden; }
-        
-        /* NAVBAR SUPERIORE MODERNA */
-        .navbar { background-color: rgba(255, 255, 255, 0.95); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 20px rgba(0,0,0,0.02); position: fixed; width: 100%; top: 0; left: 0; z-index: 1000; backdrop-filter: blur(10px); }
-        .nav-logo { font-size: 22px; font-weight: 800; color: #0f172a; text-decoration: none; letter-spacing: -0.5px; }
-        .nav-logo span { color: #007bff; }
-        .nav-buttons { display: flex; gap: 15px; align-items: center; }
-        
-        /* Pulsanti Navbar con Micro-Interazioni */
-        .btn-nav { padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); border: none; }
-        .btn-login-nav { background-color: transparent; color: #007bff; border: 1.5px solid #007bff; }
-        .btn-login-nav:hover { background-color: #f0f7ff; transform: translateY(-1px); }
-        .btn-register-nav { background-color: #007bff; color: white; box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15); }
-        .btn-register-nav:hover { background-color: #0056b3; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 123, 255, 0.25); }
-        .user-logged { font-size: 14px; color: #64748b; font-weight: 500; background: #e2e8f0; padding: 6px 12px; border-radius: 20px; display: none; }
-
-        /* SEZIONE HERO ANIMATA */
-        .hero { padding: 160px 20px 100px 20px; text-align: center; background: radial-gradient(circle at top right, #e0f2fe 0%, #f8fafc 100%); position: relative; }
-        .hero h1 { font-size: 46px; font-weight: 800; color: #0f172a; margin-bottom: 24px; max-width: 850px; margin-left: auto; margin-right: auto; line-height: 1.15; letter-spacing: -1px; }
-        .hero p { font-size: 19px; color: #475569; max-width: 655px; margin: 0 auto 35px auto; }
-        .btn-hero { padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 8px; border: none; background-color: #007bff; color: white; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 10px 25px rgba(0, 123, 255, 0.25); }
-        .btn-hero:hover { background-color: #0056b3; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0, 123, 255, 0.35); }
-
-        /* CARATTERISTICHE (FEATURES) */
-        .features-container { max-width: 1100px; margin: -50px auto 60px auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; position: relative; z-index: 10; }
-        .feature-card { background: white; padding: 35px 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.06); }
-        .feature-icon { font-size: 36px; margin-bottom: 15px; display: inline-block; }
-        .feature-card h3 { font-size: 19px; margin-bottom: 12px; color: #0f172a; font-weight: 700; }
-        .feature-card p { font-size: 14px; color: #64748b; line-height: 1.6; }
-
-        /* FAQ */
-        .info-section { max-width: 800px; margin: 40px auto 80px auto; padding: 0 20px; }
-        .info-section h2 { text-align: center; margin-bottom: 40px; font-size: 30px; color: #0f172a; font-weight: 800; }
-        .faq-item { background: white; padding: 24px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.01); border: 1px solid #e2e8f0; }
-        .faq-item h4 { font-size: 16px; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
-        .faq-item p { font-size: 14.5px; color: #475569; }
-
-        /* FINESTRA MODALE CON ANIMAZIONE FLUIDA (GLASSMORPHISM) */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1); backdrop-filter: blur(8px); }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        
-        .card-modal { background: white; max-width: 440px; width: 90%; padding: 40px 35px; border-radius: 20px; box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.15); text-align: center; position: relative; transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); overflow: hidden; }
-        .modal-overlay.active .card-modal { transform: scale(1) translateY(0); }
-        
-        .btn-close-modal { position: absolute; top: 20px; right: 25px; font-size: 24px; background: none; border: none; color: #94a3b8; cursor: pointer; font-weight: bold; z-index: 2010; transition: color 0.2s; }
-        .btn-close-modal:hover { color: #334155; }
-        
-        /* Input Form */
-        .form-group { display: flex; flex-direction: column; gap: 14px; margin: 25px 0 20px 0; }
-        input { width: 100%; padding: 14px 18px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 14.5px; background-color: #f8fafc; transition: all 0.2s ease; }
-        input:focus { border-color: #007bff; outline: none; background-color: #fff; box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1); }
-        
-        /* Bottoni Azione */
-        .btn-main { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; transition: all 0.2s ease; }
-        .btn-main:active { transform: scale(0.98); }
-        .btn-blue { background-color: #007bff; box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2); }
-        .btn-blue:hover { background-color: #0056b3; }
-        .btn-green { background-color: #28a745; text-decoration: none; display: inline-block; box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2); }
-        .btn-green:hover { background-color: #218838; }
-        .btn-danger { background-color: transparent; color: #dc3545; border: 1.5px solid #dc3545; font-size: 14px; padding: 10px 20px; border-radius: 8px; margin-top: 20px; display: inline-block; }
-        .btn-danger:hover { background-color: #fff5f5; }
-
-        /* Avvisi Dinamici all'interno del box */
-        .alert { padding: 14px; border-radius: 10px; font-size: 13.5px; margin-bottom: 20px; display: none; text-align: left; font-weight: 500; animation: fadeIn 0.3s ease; }
-        .alert-error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
-        .alert-success { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; }
-
-        .hidden { display: none !important; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+    <title>MattweTuttoTech | Piattaforma di Formazione & Quiz</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#007bff',
+                            600: '#0069d9',
+                            950: '#030712',
+                        },
+                        darkBg: '#090d16',
+                        lightBg: '#f8fafc',
+                    }
+                }
+            }
         }
-
-        /* FOOTER */
-        footer { background-color: #0f172a; color: #94a3b8; text-align: center; padding: 35px 20px; font-size: 14px; border-top: 1px solid #1e293b; margin-top: 40px; }
-        footer a { color: #00cbc6; text-decoration: none; font-weight: bold; transition: color 0.2s; }
-        footer a:hover { color: #00ffff; }
-    </style>
+    </script>
+    
+    <!-- Font e Icone -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050811; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #007bff; }
+    </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 dark:bg-[#050811] dark:text-slate-100 min-h-screen flex flex-col selection:bg-brand-500 selection:text-white overflow-x-hidden">
 
-    <nav class="navbar">
-        <a href="#" class="nav-logo">Mattwe<span>TuttoTech</span></a>
-        <div class="nav-buttons" id="nav-auth-container">
-            <button class="btn-nav btn-login-nav" id="nav-login-btn">Accedi</button>
-            <button class="btn-nav btn-register-nav" id="nav-register-btn">Iscriviti</button>
-            <span class="user-logged" id="nav-user-text"></span>
+    <!-- FLUSSI DI LUCE DECORATIVI SULLO SFONDO -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] pointer-events-none overflow-hidden z-0 opacity-40 dark:opacity-100">
+        <div class="absolute top-[-10%] left-[10%] w-[350px] h-[350px] bg-brand-500/20 rounded-full blur-[120px]"></div>
+        <div class="absolute top-[20%] right-[5%] w-[400px] h-[400px] bg-purple-600/15 rounded-full blur-[130px]"></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <header class="fixed top-0 left-0 w-full z-40 bg-white/80 dark:bg-darkBg/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-brand-500/25 transition-transform duration-300 group-hover:scale-110">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    Mattwe<span class="text-brand-500 font-extrabold">TuttoTech</span>
+                </span>
+            </a>
+
+            <!-- Menu Desktop -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-300">
+                <a href="#" class="hover:text-brand-500 transition-colors">Home</a>
+                <a href="#corsi" class="hover:text-brand-500 transition-colors">Corsi</a>
+                <a href="#quiz-section" class="hover:text-brand-500 transition-colors">Area Quiz</a>
+                <a href="#vantaggi" class="hover:text-brand-500 transition-colors">Perché Scegliermi</a>
+            </nav>
+
+            <!-- Azioni Utente -->
+            <div class="flex items-center gap-4">
+                <!-- Stato Non Autenticato -->
+                <div id="guest-nav-actions" class="flex items-center gap-3">
+                    <button onclick="openAuthModal('login')" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-500 px-4 py-2 transition-colors">Accedi</button>
+                    <button onclick="openAuthModal('signup')" class="text-sm font-medium bg-brand-500 hover:bg-brand-600 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-brand-500/20 transition-all">Iscriviti</button>
+                </div>
+
+                <!-- Stato Autenticato -->
+                <div id="user-nav-actions" class="hidden flex items-center gap-4">
+                    <button onclick="openAuthModal('dashboard')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-200/50 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all">
+                        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                        <span id="user-display-name" class="text-sm font-medium text-slate-800 dark:text-slate-200 max-w-[155px] truncate">Profilo</span>
+                    </button>
+                    <button onclick="handleLogout()" class="p-2.5 rounded-lg text-slate-500 hover:text-rose-500 transition-colors" title="Disconnettiti">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-    </nav>
-
-    <header class="hero">
-        <h1>Impara la Tecnologia e Mettiti alla Prova con i Nostri Quiz Esclusivi</h1>
-        <p>Accedi a una suite completa di lezioni e quiz gratuiti pensati per appassionati e studenti. Registrati per sbloccare l'area riservata.</p>
-        <button class="btn-hero" id="hero-start-btn">Inizia Ora Gratis</button>
     </header>
 
-    <section class="features-container">
-        <div class="feature-card">
-            <div class="feature-icon">📚</div>
-            <h3>Corsi Gratuiti al 100%</h3>
-            <p>Nessun costo nascosto o abbonamento. Tutte le guide e le risorse di MattweTuttoTech sono accessibili liberamente.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">📝</div>
-            <h3>Quiz Interattivi</h3>
-            <p>Metti alla prova quello che hai imparato rispondendo alle nostre domande mirate e analizza subito i risultati.</p>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🔒</div>
-            <h3>Profilo Riservato</h3>
-            <p>Iscrivendoti in modo sicuro salvi i tuoi progressi di studio e sblocchi l'accesso ai moduli d'esame avanzati.</p>
-        </div>
-    </section>
+    <!-- MAIN -->
+    <main class="flex-grow pt-24 z-10">
+        <!-- HERO -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-20 text-center relative">
+            <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/80 text-xs text-brand-500 font-semibold mb-8 shadow-sm">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-500 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
+                </span>
+                Nuova Area Quiz integrata localmente in questa piattaforma!
+            </div>
+            
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 leading-[1.1]">
+                Padroneggia il Futuro della <br>
+                <span class="bg-gradient-to-r from-brand-500 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
+                    Tecnologia e dei Quiz
+                </span>
+            </h1>
+            
+            <p class="max-w-2xl mx-auto text-lg text-slate-600 dark:text-slate-400 mb-10 leading-relaxed">
+                Impara lo Sviluppo Web, l'Intelligenza Artificiale e i Database. Mettiti alla prova direttamente qui sotto senza cambiare sito!
+            </p>
 
-    <section class="info-section">
-        <h2>Domande Frequenti</h2>
-        <div class="faq-item">
-            <h4>❓ Come posso iniziare i quiz?</h4>
-            <p>È semplicissimo: clicca sul pulsante "Iscriviti" in alto a destra o su "Inizia Ora Gratis", crea il tuo profilo inserendo un'email e una password e avrai subito accesso al pannello dei quiz protetti.</p>
-        </div>
-        <div class="faq-item">
-            <h4>❓ Dove si trovano fisicamente i corsi?</h4>
-            <p>Per garantirti una navigazione fluida e aggiornamenti in tempo reale, utilizziamo uno spazio dedicato su Google Sites, protetto dalla nostra barriera di autenticazione Supabase.</p>
-        </div>
-    </section>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 max-w-md mx-auto">
+                <a href="#corsi" class="inline-flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-white font-semibold px-8 py-4 rounded-xl shadow-xl shadow-brand-500/25 transition-all">
+                    Sfoglia i Corsi <i class="fa-solid fa-arrow-down"></i>
+                </a>
+                <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank" class="inline-flex items-center justify-center gap-2 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 font-semibold px-8 py-4 rounded-xl transition-all shadow-sm">
+                    Altre mie iniziative <i class="fa-solid fa-arrow-up-right-from-square text-indigo-500"></i>
+                </a>
+            </div>
+        </section>
 
-    <div class="modal-overlay" id="auth-modal">
-        <div class="card-modal">
-            <button class="btn-close-modal" id="modal-close-btn">&times;</button>
-            <div id="alert-box" class="alert"></div>
-
-            <div id="section-auth">
-                <h2 id="auth-title" style="font-size: 24px; margin-bottom: 8px; font-weight: 800;">Accedi ai Corsi</h2>
-                <p id="auth-subtitle" style="color: #64748b; font-size: 14px;">Inserisci le tue credenziali per riprendere i quiz.</p>
-                
-                <div class="form-group">
-                    <input type="email" id="email" placeholder="Indirizzo Email">
-                    <input type="password" id="password" placeholder="Password (almeno 6 caratteri)">
+        <!-- SEZIONE CORSI -->
+        <section id="corsi" class="py-20 border-t border-slate-200 dark:border-slate-900 bg-white/50 dark:bg-slate-950/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">I Tuoi Percorsi Formativi</h2>
+                    <p class="text-slate-600 dark:text-slate-400">Lezioni pratiche integrate con verifiche immediate nell'area quiz sottostante.</p>
                 </div>
-                
-                <button class="btn-main btn-blue" id="btn-submit">Accedi</button>
+                <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Iniettati da script.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- AREA QUIZ INTEGRATA (INTERNA AL SITO) -->
+        <section id="quiz-section" class="py-20 border-t border-slate-200 dark:border-slate-900">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-12">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-bold uppercase mb-3">
+                        <i class="fa-solid fa-rocket"></i> Verifica Competenze Live
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Area Quiz Interattiva</h2>
+                    <p class="text-slate-600 dark:text-slate-400 mt-2">Seleziona un argomento e rispondi alle domande per testare la tua preparazione in tempo reale!</p>
+                </div>
+
+                <!-- Selettore Argomento Quiz -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-xl mb-8">
+                    <div class="flex flex-wrap gap-3 justify-center mb-8" id="quiz-topic-selector">
+                        <button onclick="loadQuiz('html-css')" class="topic-btn active px-5 py-2.5 rounded-xl text-sm font-bold border transition-all bg-brand-500 text-white border-brand-500">HTML & CSS</button>
+                        <button onclick="loadQuiz('javascript')" class="topic-btn px-5 py-2.5 rounded-xl text-sm font-bold border transition-all bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-transparent hover:border-slate-300">JavaScript ES6</button>
+                        <button onclick="loadQuiz('supabase-db')" class="topic-btn px-5 py-2.5 rounded-xl text-sm font-bold border transition-all bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-transparent hover:border-slate-300">Database & Supabase</button>
+                    </div>
+
+                    <!-- Contenitore Domande del Quiz -->
+                    <div id="quiz-app-container" class="space-y-6">
+                        <!-- Generato dinamicamente da script.js -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEZIONE VANTAGGI -->
+        <section id="vantaggi" class="py-20 border-t border-slate-200 dark:border-slate-900 bg-white/50 dark:bg-slate-950/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+                    <div>
+                        <span class="text-brand-500 text-sm font-bold uppercase tracking-wider">Perché Studiare con Me</span>
+                        <h3 class="text-3xl font-bold text-slate-900 dark:text-white mt-2 mb-6">Un'esperienza di studio focalizzata sul tuo risultato.</h3>
+                        <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Ogni lezione e ogni quiz sono progettati per darti un riscontro immediato sul tuo codice, senza farti perdere tempo dietro a configurazioni complesse.
+                        </p>
+                    </div>
+                    <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/60 shadow-sm">
+                            <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-500/10 flex items-center justify-center text-brand-500 mb-4">
+                                <i class="fa-solid fa-code text-xl"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Sviluppo Pratico</h4>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm">Scriverai codice reale ed eseguirai test all'istante direttamente sulla piattaforma.</p>
+                        </div>
+                        <div class="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/60 shadow-sm">
+                            <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-500 mb-4">
+                                <i class="fa-solid fa-square-poll-vertical text-xl"></i>
+                            </div>
+                            <h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Quiz in Tempo Reale</h4>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm">Niente redirect esterni. Monitora il tuo punteggio e le risposte esatte direttamente qui.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white dark:bg-darkBg border-t border-slate-200 dark:border-slate-900 py-12 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center text-white"><i class="fa-solid fa-graduation-cap text-sm"></i></div>
+                <span class="text-md font-semibold text-slate-900 dark:text-white">MattweTuttoTech</span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-500">&copy; 2026 MattweTuttoTech. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+
+    <!-- FINESTRA MODALE UNICA -->
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onclick="closeAuthModal()"></div>
+        <div id="modal-container" class="relative w-full max-w-lg bg-white dark:bg-[#0c1220] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl scale-90 transition-transform duration-300 max-h-[90vh] overflow-y-auto">
+            
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <h3 id="modal-title" class="text-2xl font-bold text-slate-900 dark:text-white">Accedi</h3>
+                    <p id="modal-subtitle" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Inserisci i tuoi dati d'accesso.</p>
+                </div>
+                <button onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-500"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div id="section-dashboard" class="hidden">
-                <div style="font-size: 44px; margin-bottom: 12px; animation: fadeIn 0.5s ease;">🎓</div>
-                <h2 style="font-size: 24px; color: #28a745; margin-bottom: 10px; font-weight: 800;">Area Riservata Attiva!</h2>
-                <p style="color: #475569; font-size: 14.5px; margin-bottom: 25px;">Il tuo account è autenticato con successo. Clicca qui sotto per essere reindirizzato al catalogo dei quiz su Google Sites.</p>
-                
-                <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank" style="text-decoration: none; display: block;">
-                    <button class="btn-main btn-green">ENTRA NELL'AREA QUIZ 🚀</button>
-                </a>
-                
-                <button class="btn-main btn-danger" id="btn-logout">Disconnetti</button>
+            <!-- FORM ACCESSO -->
+            <form id="login-view" onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-300 uppercase mb-2">Email</label>
+                    <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-300 uppercase mb-2">Password</label>
+                    <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none">
+                </div>
+                <button type="submit" id="btn-login-submit" class="w-full py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all">Accedi</button>
+                <p class="text-center text-sm text-slate-500 mt-4">Non hai un account? <button type="button" onclick="switchModalTab('signup')" class="text-brand-500 font-semibold hover:underline">Registrati</button></p>
+            </form>
+
+            <!-- FORM REGISTRAZIONE -->
+            <form id="signup-view" onsubmit="handleSignupSubmit(event)" class="hidden space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-300 uppercase mb-2">Email</label>
+                    <input type="email" id="signup-email" required class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-300 uppercase mb-2">Password</label>
+                    <input type="password" id="signup-password" required class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none" placeholder="Minimo 6 caratteri">
+                </div>
+                <button type="submit" id="btn-signup-submit" class="w-full py-3.5 bg-brand-500 hover:bg-brand-600 text-white font-semibold rounded-xl transition-all">Crea Account</button>
+                <p class="text-center text-sm text-slate-500 mt-4">Hai già un account? <button type="button" onclick="switchModalTab('login')" class="text-brand-500 font-semibold hover:underline">Accedi</button></p>
+            </form>
+
+            <!-- AREA STUDENTI (DASHBOARD) -->
+            <div id="dashboard-view" class="hidden space-y-6">
+                <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-brand-500 flex items-center justify-center text-white"><i class="fa-solid fa-user"></i></div>
+                    <div class="overflow-hidden"><span id="dashboard-user-email" class="text-slate-900 dark:text-white font-medium block truncate"></span></div>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">I Tuoi Corsi Attivi</h4>
+                    <div id="my-courses-list" class="space-y-2"></div>
+                </div>
+                <div class="pt-2">
+                    <a href="#quiz-section" onclick="closeAuthModal()" class="block w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-center rounded-2xl shadow-lg hover:opacity-90 transition-opacity">
+                        VAI ALL'AREA QUIZ INTERNA 🚀
+                    </a>
+                </div>
+                <div class="border-t border-slate-200 dark:border-slate-800 pt-4 flex justify-between items-center">
+                    <button id="btn-goto-admin" onclick="switchModalTab('admin')" class="hidden px-4 py-2 bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 rounded-xl text-xs font-bold">Pannello Admin</button>
+                    <button onclick="handleLogout()" class="px-5 py-2.5 bg-rose-500/10 text-rose-500 rounded-xl text-sm font-semibold hover:bg-rose-500 hover:text-white transition-all ml-auto">Logout</button>
+                </div>
+            </div>
+
+            <!-- PANNELLO ADMIN SEGRETO -->
+            <div id="admin-view" class="hidden space-y-6">
+                <div class="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-between">
+                    <span class="text-xs text-indigo-400 font-bold uppercase">Pannello Amministratore Mattwe</span>
+                    <button onclick="switchModalTab('dashboard')" class="text-xs font-semibold px-3 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-lg">Vista Studente</button>
+                </div>
+                <form onsubmit="handleCreateCourseAdmin(event)" class="space-y-3 bg-slate-50 dark:bg-slate-900/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <input type="text" id="admin-course-title" placeholder="Titolo Corso" required class="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="admin-course-category" placeholder="Categoria" required class="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none">
+                        <input type="text" id="admin-course-level" placeholder="Livello" required class="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="admin-course-duration" placeholder="Durata (es: 25 ore)" required class="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none">
+                        <select id="admin-course-color" class="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none">
+                            <option value="from-blue-500 to-indigo-600">Blu Neon</option>
+                            <option value="from-emerald-500 to-teal-600">Verde Smeraldo</option>
+                        </select>
+                    </div>
+                    <textarea id="admin-course-desc" placeholder="Descrizione del corso..." required rows="2" class="w-full px-3 py-2 text-xs rounded-lg bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none"></textarea>
+                    <button type="submit" class="w-full py-2 bg-indigo-500 text-white font-bold rounded-lg text-xs hover:bg-indigo-600">Crea e Pubblica Corso</button>
+                </form>
+                <div class="border border-slate-200 dark:border-slate-800 rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/40">
+                    <h4 class="text-xs font-bold text-slate-800 dark:text-white uppercase mb-2">Registro Studenti</h4>
+                    <div id="admin-students-list" class="space-y-2 max-h-[150px] overflow-y-auto text-xs"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <footer>
-        <p>Mattwe-Copyright&2026 | Visita il <a href="https://sites.google.com/view/allmywebsites-mattwe/home-page" target="_blank">Sito Web Principale di MattweTuttoTech</a></p>
-    </footer>
+    <!-- TOAST NOTIFICHE -->
+    <div id="toast-notification" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-4 rounded-2xl border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-2xl translate-y-24 opacity-0 transition-all duration-300 max-w-sm pointer-events-none">
+        <div id="toast-icon-bg" class="w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0"><i id="toast-icon" class="fa-solid"></i></div>
+        <div>
+            <p id="toast-title" class="font-bold text-sm text-slate-900 dark:text-white"></p>
+            <p id="toast-desc" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5"></p>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
